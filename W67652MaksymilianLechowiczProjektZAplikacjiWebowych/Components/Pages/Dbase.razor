@@ -1,0 +1,69 @@
+﻿@page "/dbase"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Services.ICrossService CrossService
+@using W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Entity
+<h3>Plant Table</h3>
+
+@if (plants == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>plant Name</th>
+                <th>File Name for Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plant in plants)
+            {
+                <tr>
+                    <td>@plant.Id</td>
+                    <td>@plant.PlantName</td>
+                    <td>@plant.FileNameForImage</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" @onclick="() => NavigateToUpdate(plant.Id)">Update</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Deleteplant(plant.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+<button class="btn btn-primary" @onclick="OpenAddPlantModal">Add New plant</button>
+
+@code {
+    private List<Plant> plants;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the plant when the component is initialized
+        plants = await CrossService.GetPlants();
+
+    }
+
+    private void OpenAddPlantModal()
+    {
+        Navigation.NavigateTo("/add-plant");
+    }
+
+    private void NavigateToUpdate(int plantId)
+    {
+        Navigation.NavigateTo($"/update/{plantId}");
+    }
+
+    private async Task Deleteplant(int plantId)
+    {
+
+        await CrossService.DeletePlant(plantId);
+
+        plants = await CrossService.GetPlants();
+    }
+}

@@ -1,0 +1,47 @@
+﻿@page "/add-plant"
+@rendermode InteractiveServer
+@using W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Entity
+@inject W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Services.ICrossService CrossService
+@inject NavigationManager Navigation
+
+<h3>Add New plant</h3>
+
+<div class="mb-3">
+    <label for="plantName" class="form-label">plant Name</label>
+    <input type="text" class="form-control" id="plantName" @bind="newPlantName" />
+</div>
+<div class="mb-3">
+    <label for="filename" class="form-label">File Name for Image</label>
+    <input type="text" class="form-control" id="filename" @bind="filename2" />
+</div>
+
+<button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+<button class="btn btn-primary" @onclick="InsertPlant">Save</button>
+
+@code {
+    private string newPlantName;
+    private string filename2;
+
+    private async Task InsertPlant()
+    {
+        // Create a new plant object
+        var plant = new Plant
+            {
+                PlantName = newPlantName,
+                FileNameForImage = filename2,
+            };
+
+        // Insert the plant into the database
+        await CrossService.AddPlant(plant);
+
+        // Close the modal and navigate back to the plant page
+        Navigation.NavigateTo("/dbase");
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        // Close the modal and navigate back to the plant page
+        Navigation.NavigateTo("/dbase");
+    }
+    }

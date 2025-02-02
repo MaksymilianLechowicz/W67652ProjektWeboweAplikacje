@@ -1,0 +1,40 @@
+﻿@page "/album"
+@rendermode InteractiveServer
+@using GroqApiLibrary;
+@using System.Text.Json.Nodes;
+@inject W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Services.ICrossService CrossService
+@using W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Entity
+
+<PageTitle>Album</PageTitle>
+<h3>Album</h3>
+
+@if (plants3 == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <input type="number" class="form-control" placeholder="Select number of a plant you wish to see image of" @bind="newMessage2" />
+    <button class="btn btn-primary" type="button" @onclick="LoadImage">Confirm image</button><br />
+    <img src="@FileImage" alt="Select Image" width="200" height="200"/>
+}
+
+@code {
+    private List<Plant> plants3;
+    private string? newMessage2;
+    private int IdOfImage;
+    private string FileImage = "favicon.png";
+    //var result3 = await CrossService.GetPlant(Int32.Parse(newMessage2))
+    private async Task LoadImage()
+    {
+        var result4 = await CrossService.GetPlant(Int32.Parse(newMessage2));
+        FileImage = "Irysy niskie (SDB)/" + result4.FileNameForImage;
+        StateHasChanged();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the plant when the component is initialized
+        plants3 = await CrossService.GetPlants();
+
+    }
+}

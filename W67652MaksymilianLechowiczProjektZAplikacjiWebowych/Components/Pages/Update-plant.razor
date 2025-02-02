@@ -1,0 +1,53 @@
+﻿@page "/update/{plantId:int}"
+@rendermode InteractiveServer
+@using W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Entity
+@inject W67652MaksymilianLechowiczProjektZAplikacjiWebowych.Services.ICrossService CrossService
+@inject NavigationManager Navigation
+
+<h3>Update Plant</h3>
+
+@if (plant == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <label for="plantName" class="form-label">plant Name</label>
+        <input type="text" class="form-control" id="plantName" @bind="plant.PlantName" />
+    </div>
+    <div class="mb-3">
+        <label for="filename" class="form-label">FileNameForImage</label>
+        <input type="text" class="form-control" id="filename" @bind="plant.FileNameForImage" />
+    </div>
+    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    <button class="btn btn-primary" @onclick="UpdatePlant">Save</button>
+}
+
+@code {
+    [Parameter]
+    public int plantId { get; set; }
+
+    private Plant plant;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the Plant to be updated
+        plant = await CrossService.GetPlant(plantId);
+    }
+
+    private async Task UpdatePlant()
+    {
+        // Update the Plant using the service
+        await CrossService.UpdatePlant(plant);
+
+        // Redirect back to the Plant list page
+        Navigation.NavigateTo("/dbase");
+    }
+
+    private void Cancel()
+    {
+        // Navigate back to the Plant list page
+        Navigation.NavigateTo("/dbase");
+    }
+}
